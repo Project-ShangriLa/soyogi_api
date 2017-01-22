@@ -33,9 +33,9 @@ get '/anime/v1/voice-actor/twitter/follower/diff-ranking' do
   next_day = target_day + 1
 
   start_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{start_day}' and get_date < '#{start_day_next}'")
-                    .select_hash(:voice_actor_master_id, [:name, :follower])
+                    .select_hash(:voice_actor_master_id, [:name, :follower, :get_date])
 
-  end_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{target_day}' and get_date < '#{next_day}'").all
+  end_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{target_day}' and get_date < '#{next_day}'").reverse(:get_date).all
 
   if end_row.length == 0
     start_day = Date.today - range_days.to_i - 1

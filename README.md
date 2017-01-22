@@ -81,3 +81,41 @@ curl localhost:4567/anime/v1/voice-actor/twitter/follower/diff-ranking
 
 curl 'localhost:4567/anime/v1/voice-actor/twitter/follower/diff-ranking?range=1' | jq . | less
 ```
+
+
+```
+{
+  "start": "2017-01-21 20:00",
+  "end": "2017-01-22 20:00",
+  "diff_hour": 24,
+  "diff_follower": [
+    {
+      "name": "島﨑信長(島崎信長)",
+      "num": 1217
+    },
+    {
+      "name": "上坂すみれ",
+      "num": 1182
+    },
+    {
+      "name": "高橋李依",
+      "num": 903
+    },
+    {
+      "name": "諏訪部順一 Junichi Suwabe",
+      "num": 892
+    },
+    {
+      "name": "愛美",
+      "num": 865
+    },
+    {
+      "name": "杉田智和",
+      "num": 751
+    },
+    {
+      "name": "中村悠一オルタ",
+      "num": 717
+    },
+    {
+```    

@@ -84,8 +84,9 @@ get '/anime/v1/voice-actor/twitter/follower/diff-ranking' do
   db.disconnect
 
   respose = {
-      start: start_get_date,
-      end: end_get_date,
+      start: start_get_date.strftime("%Y-%m-%d %H:%M"),
+      end: end_get_date.strftime("%Y-%m-%d %H:%M"),
+      diff_hour: ((end_get_date - start_get_date) / 3600).to_i,
       diff_follower: result
   }
 

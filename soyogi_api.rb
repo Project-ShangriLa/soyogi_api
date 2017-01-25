@@ -20,9 +20,27 @@ def db_connection()
                 :port=>settings.database_port)
 end
 
+
+def get_start_rows(db, start_day, start_day_next, accounts)
+
+  in_condition = accounts ? "and screen_name in (\"#{accounts.split(',').join('","')}\")" : ''
+
+  db[:voice_actor_twitter_follwer_status_histories].
+      where("get_date >= '#{start_day}' and get_date < '#{start_day_next}' #{in_condition}")
+      .select_hash(:voice_actor_master_id, [:name, :follower, :get_date])
+end
+
+def get_end_rows(db, target_day, next_day, accounts)
+  in_condition = accounts ? "and screen_name in (\"#{accounts.split(',').join('","')}\")" : ''
+
+  db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{target_day}' and get_date < '#{next_day}' #{in_condition} ").reverse(:get_date).all
+end
+
 get '/anime/v1/voice-actor/twitter/follower/diff-ranking' do
   range_days = params[:range]
   range_days ||= 1
+
+  accounts = params[:accounts]
 
   db = db_connection()
   result = []
@@ -32,10 +50,9 @@ get '/anime/v1/voice-actor/twitter/follower/diff-ranking' do
   target_day = Date.today
   next_day = target_day + 1
 
-  start_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{start_day}' and get_date < '#{start_day_next}'")
-                    .select_hash(:voice_actor_master_id, [:name, :follower, :get_date])
+  start_row = get_start_rows(db, start_day, start_day_next, accounts)
 
-  end_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{target_day}' and get_date < '#{next_day}'").reverse(:get_date).all
+  end_row = get_end_rows(db, target_day, next_day, accounts)
 
   if end_row.length == 0
     start_day = Date.today - range_days.to_i - 1
@@ -43,10 +60,9 @@ get '/anime/v1/voice-actor/twitter/follower/diff-ranking' do
     target_day = Date.today - 1
     next_day = target_day + 1
 
-    start_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{start_day}' and get_date < '#{start_day_next}'")
-                    .select_hash(:voice_actor_master_id, [:name, :follower, :get_date])
+    start_row = get_start_rows(db, start_day, start_day_next, accounts)
 
-    end_row = db[:voice_actor_twitter_follwer_status_histories].where("get_date >= '#{target_day}' and get_date < '#{next_day}'").reverse(:get_date).all
+    end_row = get_end_rows(db, target_day, next_day, accounts)
   end
 
   diff_map = {}
